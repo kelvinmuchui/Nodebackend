@@ -1,0 +1,26 @@
+ <div class="header clearfix">
+        <nav>
+          <ul class="nav nav-pills pull-right">
+         {{#if user}}
+     
+			  <li> <a href = "/" class = " active"> Home </a> </li>
+          
+        
+  			 <li> <a href = "/dashboard" class = " active"> Dashboard </a> </li>
+
+				{{else}}	
+			 <li> <a href = "/" class = " active"> Home </a> </li>
+		
+
+			 <li> <a href = "/users/login" class = " active"> Login </a> </li>
+			  <li> <a href = "/users/register" class = " active"> Register </a> </li>
+			  <li> <a href = "/users/forgotpassword" class = " active"> Forgot Password </a> </li>
+			  {{/if}}
+			  </ul>
+
+        </nav>
+        <h3 class="text-muted">Node </h3>
+      </div>
+
+
+
