@@ -1,17 +1,27 @@
-var express = require('express');
+'use strict';
+
+var express = require ('express');
 var router = express.Router();
+
+var varidator = require('validator');
+var  bcrypt = require('bcryptjs');
+var salt = bcrypt.genSaltSync(10);
+var hash = bcrypt.hashSync("B4c0/\/", salt);
 
 var User = require('../models/user');
 /* GET users listing. */
 router.get('/', function (req, res, next) {
   res.send('respond with a resource');
 });
+
 //..............................................................................................//
 // login
 //..............................................................................................//
 
 router.get('/login', function (req, res, next){
-  res.render('users/login', {title: 'Login'})
+  res.render('users/login', {
+  	title: 'Login'
+  })
 })
 
 .post(function (req, res){
@@ -38,18 +48,23 @@ router.get('/logout', function (req, res, next){
 
 //@ TODO this will require a use session
 router.get('/profile', function (req, res, next){
-  res.render('users/profile', {title: 'profile'})
+  res.render('users/profile', {
+  	title: 'profile'
+  })
 })
 .post(function (req, res){
 	console.log(req)
 });
+
 //..............................................................................................//
 //register
 //..............................................................................................//
 
 
 router.get('/register', function (req, res, next){
-  res.render('users/register', {title: 'Register'})
+  res.render('users/register', {
+  	title: 'Register'
+  })
 })
 .post(function (req, res){
 	var email =  req.param('email');
@@ -59,6 +74,19 @@ router.get('/register', function (req, res, next){
 		//@TODO Flash Msg
 		req.redirect('/register');
 	}
+  var hash = bcrypt.hashSync(password, salt);
+  var user = new User({
+    email : email,
+    password: hash
+  });
+  user.save(function(err){
+    if (err){
+      res.redirect('register')
+    }
+    req.redirect('/register_pending');
+    console.log('User saved');
+
+  })
 });
 
 //..............................................................................................//
@@ -67,34 +95,46 @@ router.get('/register', function (req, res, next){
 
 
 router.get('/register_pending', function (req, res){
-	res.render('users/register_pending', {title: 'Registered'})
+	res.render('users/register_pending', {
+		title: 'Registered'
+	})
 });
 
 
 router.get('/register_confirm', function (req, res){
-	res.render('users/register_confirm', {title: 'Registerion confirmed'})
+	res.render('users/register_confirm', {
+		title: 'Registerion confirmed'
+	})
 });
+
 //..............................................................................................//
 //passwords
 //..............................................................................................//
 
 
 router.get('/forgotpassword', function (req, res, next){
-  res.render('users/forgotpassword', {title: 'forgotpassword'})
+  res.render('users/forgotpassword', {
+  	title: 'forgotpassword'
+  })
 });
 
 router.get('/password_reset', function (req, res){
- res.render('users/password_reset',{title : 'Reset password_reset'} )
+ res.render('users/password_reset',{
+ 	title : 'Reset password_reset'
+ })
 })
 .post(function (req, res){
 console.log(req)
 });
+
 //..............................................................................................//
-//Session /delete accont
+//Session /delete account
 //..............................................................................................//
 
 router.get('/delete', function(req, res){
-	res.render('users/account_delete', {title: "Delete account"});
+	res.render('users/account_delete', {
+		title: "Delete account"
+	});
 })
 .post(function (req, res){
 if (req.param('confirm') == 1){
@@ -124,19 +164,21 @@ res.redirect('/');
 });
 
 router.get('/reactivate', function(req, res){
-	res.render('users/accont_reactivate');
+	res.render('users/account_reactivate');
 })
 .post(function(req, res){
+  if (req.param('confirm') == 1){
 	var email = req.param('email');
 	//@TODO validate Email
 
 	User.find({email: email}, function(err){
 		if(err){
-			//@TODO flash msg	
+			//@TODO flash msg
 			res.redirect('/reactivate')
 				}
 	})
 	//@ TODO send email touser
+}
 });
 router.get('/reactivate/:code', function(req, res){
 	var code = req.param('code');

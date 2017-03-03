@@ -1,0 +1,15 @@
+<h1> {{ title }}</h1>
+
+<h2> Enter you email to reactivate</h2>
+<form class = "form-horizontal" method = "post" action = "/users/delete">
+<input type="hidden" name="confirm" value="1">
+  <div class="form-group">
+    <label for="exampleInputEmail1">Email address</label>
+    <input type="email" class="form-control" id="InputEmail1" placeholder="Email">
+  </div>
+
+
+  <div class="form-group">
+    <button type="submit" class="btn btn-success">reactivate</button>
+</div>
+</form>

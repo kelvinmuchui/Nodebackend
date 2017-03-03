@@ -1,36 +1,49 @@
 'use strict';
 
-var express = require('express');
-var exhbs = require('express-handlebars');
-var path = require('path');
-
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var mongoose = require('mongoose');//db
-var  session = require('express-session');
-var MongoStore = require('connect-mongo') (session);
+var express      =  require('express');
+var exhbs        =  require('express-handlebars');
+var path         =  require('path');
+var fs           =  require('fs');
+var rfs          =  require('rotate-file-stream')
+var favicon      =  require('serve-favicon');
+var logger       =  require('morgan');
+var cookieParser =  require('cookie-parser');
+var bodyParser   =  require('body-parser');
+var mongoose     =  require('mongoose');//db
+var  session     =  require('express-session');
+var MongoStore   =  require('connect-mongo') (session);
 
 //..............................................................................................//
 // init app
 //..............................................................................................//
 
-var app = express();
+var app          = express();
+
 //..............................................................................................//
 // costom middle ware
 //..............................................................................................//
+
 var requireLogin =require('./middleware/require_login');
 
 //..............................................................................................//
-// login
+// logging
 //..............................................................................................//
+
+// var logDirectory = path.join(__dirname, 'logs');
+// fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory);
+//
+// var accesslogStream = rfs('accces.log',{
+//   interval: '2d',
+//   path : logDirectory
+// });
+// app.use(logger(combined, {stream: accesslogStream}));
 
 //..............................................................................................//
 //init Database
 //..............................................................................................//
 
 mongoose.connect('mongodb://localhost/myapp');
+
 //..............................................................................................//
 //init engine
 //..............................................................................................//
@@ -41,7 +54,8 @@ app.engine( '.hbs', exhbs({
 	partialDir: '__dirname' + '/views/partials',
 	layoutDir: '__dirname' + '/views/layouts',
 	extname: 'hbs'
-}));
+})
+);
 app.set('view engine', '.hbs');
 app.set('views', path.join(__dirname, 'views'));
 
@@ -64,25 +78,28 @@ app.use(session({
   store :new MongoStore({
     mongooseConnection: mongoose.connection
   })
-}));
+})
+);
 app.use(express.static(path.join(__dirname, 'public')));
+
 //..............................................................................................//
 //Routers
 //..............................................................................................//
-var dashboard = require('./routes/dashboard');
 
 app.use('/', require('./routes/index'));
 app.use('/users', require('./routes/users'));
-app.use('/dashboard*', requireLogin, dashboard);
-app.use('/dashboard', dashboard);
+app.use('/dashboard*', requireLogin, require('./routes/dashboard'));
+
 //..............................................................................................//
 // catch 404 and forward to error handler
 //..............................................................................................//
+
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
   next(err);
 });
+
 //..............................................................................................//
 // error handler
 //..............................................................................................//
