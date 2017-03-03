@@ -1,5 +1,4 @@
-'use strict';
-
+'use strict';//add more package's here
 var express      =  require('express');
 var exhbs        =  require('express-handlebars');
 var path         =  require('path');
@@ -20,7 +19,7 @@ var MongoStore   =  require('connect-mongo') (session);
 var app          = express();
 
 //..............................................................................................//
-// costom middle ware
+// castom middle ware
 //..............................................................................................//
 
 var requireLogin =require('./middleware/require_login');
